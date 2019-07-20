@@ -7,8 +7,8 @@ import io.reactivex.subjects.PublishSubject
 object EventBus {
     private val bus = PublishSubject.create<Event>()
 
-    fun post(parameter: Event) {
-        bus.onNext(parameter)
+    fun post(event: Event) {
+        bus.onNext(event)
     }
 
     fun observe() =

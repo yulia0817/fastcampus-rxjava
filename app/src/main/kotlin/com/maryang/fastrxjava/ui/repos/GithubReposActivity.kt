@@ -5,16 +5,17 @@ import android.text.Editable
 import android.text.TextWatcher
 import android.view.View
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.maryang.fastrxjava.base.BaseActivity
+import com.maryang.fastrxjava.base.BaseViewModelActivity
 import com.maryang.fastrxjava.entity.GithubRepo
 import com.maryang.fastrxjava.event.DataObserver
 import io.reactivex.observers.DisposableObserver
+import io.reactivex.rxkotlin.plusAssign
 import kotlinx.android.synthetic.main.activity_github_repos.*
 
 
-class GithubReposActivity : BaseActivity() {
+class GithubReposActivity : BaseViewModelActivity() {
 
-    private val viewModel: GithubReposViewModel by lazy {
+    override val viewModel: GithubReposViewModel by lazy {
         GithubReposViewModel()
     }
     private val adapter: GithubReposAdapter by lazy {
@@ -47,12 +48,12 @@ class GithubReposActivity : BaseActivity() {
     }
 
     private fun subscribeSearch() {
-        viewModel.searchGithubReposSubject()
+        compositeDisposable += viewModel.searchGithubReposSubject()
             .doOnNext {
                 if (it) showLoading()
             }
             .switchMap { viewModel.searchGithubReposObservable() }
-            .subscribe(object : DisposableObserver<List<GithubRepo>>() {
+            .subscribeWith(object : DisposableObserver<List<GithubRepo>>() {
                 override fun onNext(t: List<GithubRepo>) {
                     hideLoading()
                     adapter.items = t
@@ -68,7 +69,7 @@ class GithubReposActivity : BaseActivity() {
     }
 
     private fun subscribeDataObserver() {
-        DataObserver.observe()
+        compositeDisposable += DataObserver.observe()
             .filter { it is GithubRepo }
             .subscribe { repo ->
                 adapter.items.find {

@@ -1,15 +1,35 @@
 package com.maryang.fastrxjava.util
 
-import android.util.Log
-import com.maryang.fastrxjava.base.BaseApplication
-import io.reactivex.Observable
+import com.maryang.fastrxjava.observer.DefaultSingleObserver
+import io.reactivex.Single
 
-class Error {
+object Error {
 
     fun error() {
-        Observable.error<Unit>(IllegalStateException())
-            .subscribe({}, {
-                Log.d(BaseApplication.TAG, "error $it")
+        Single.error<Boolean>(IllegalStateException())
+            .onErrorResumeNext {
+                Single.just(true)
+            }
+            .onErrorReturn {
+                true
+            }
+            .subscribe(object : DefaultSingleObserver<Boolean>() {
+                override fun onSuccess(t: Boolean) {
+
+                }
+
+                override fun onError(e: Throwable) {
+                    super.onError(e)
+                    // 에러를 받는다
+                }
+            })
+
+        Single.error<Unit>(IllegalStateException())
+            .subscribe({
+
+            }, {
+                ErrorHandler.globalHandle(it)
+                // 에러를 받는다
             })
     }
 }
