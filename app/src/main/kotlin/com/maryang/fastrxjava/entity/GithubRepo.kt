@@ -1,49 +1,52 @@
 package com.maryang.fastrxjava.entity
 
 import android.os.Parcelable
+import androidx.room.Entity
+import androidx.room.Ignore
+import androidx.room.PrimaryKey
 import com.google.gson.annotations.Expose
 import com.google.gson.annotations.SerializedName
 import kotlinx.android.parcel.Parcelize
 import java.util.*
 
+@Entity
 @Parcelize
 data class GithubRepo(
+    @PrimaryKey
     @SerializedName("id")
-    override val id: Long,
+    override var id: Long,
     @SerializedName("name")
-    val name: String,
+    var name: String,
     @SerializedName("private")
-    val private: Boolean,
+    var private: Boolean,
+    @Ignore
     @SerializedName("owner")
-    val owner: GithubRepoUser,
+    var owner: User,
     @SerializedName("html_url")
-    val url: String,
+    var url: String,
     @SerializedName("description")
-    val description: String?,
+    var description: String?,
     @SerializedName("stargazers_count")
-    val stargazersCount: Int,
+    var stargazersCount: Int,
     @SerializedName("watchers_count")
-    val watchersCount: Int,
+    var watchersCount: Int,
     @SerializedName("forks_count")
-    val forksCount: Int,
+    var forksCount: Int,
     @SerializedName("open_issues_count")
-    val openIssuesCount: Int,
+    var openIssuesCount: Int,
     @SerializedName("created_at")
-    val createdAt: Date,
+    var createdAt: Date,
     @SerializedName("updated_at")
-    val updatedAt: Date,
+    var updatedAt: Date,
     @SerializedName("pushed_at")
-    val pushedAt: Date,
+    var pushedAt: Date,
     @Expose
     var star: Boolean = false
 ) : Identifier, Parcelable {
-    @Parcelize
-    data class GithubRepoUser(
-        @SerializedName("id")
-        override val id: Long,
-        @SerializedName("login")
-        val userName: String,
-        @SerializedName("avatar_url")
-        val avatarUrl: String
-    ) : Identifier, Parcelable
+    constructor() : this(
+        0, "", false, User(
+            0, "", ""
+        ), "", "", 0, 0, 0, 0,
+        Date(), Date(), Date()
+    )
 }

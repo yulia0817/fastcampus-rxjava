@@ -2,13 +2,21 @@ package com.maryang.fastrxjava.ui.repo
 
 import android.content.Context
 import android.os.Bundle
+import android.view.Menu
+import android.view.MenuItem
+import android.view.View
+import androidx.recyclerview.widget.LinearLayoutManager
 import com.bumptech.glide.Glide
 import com.maryang.fastrxjava.R
 import com.maryang.fastrxjava.base.BaseActivity
 import com.maryang.fastrxjava.entity.GithubRepo
+import com.maryang.fastrxjava.entity.Issue
 import com.maryang.fastrxjava.event.DataObserver
+import com.maryang.fastrxjava.observer.DefaultSingleObserver
+import com.maryang.fastrxjava.ui.issue.IssueCreateActivity
 import com.maryang.fastrxjava.ui.user.UserActivity
 import io.reactivex.observers.DisposableCompletableObserver
+import io.reactivex.rxkotlin.plusAssign
 import kotlinx.android.synthetic.main.activity_github_repo.*
 import org.jetbrains.anko.imageResource
 import org.jetbrains.anko.intentFor
@@ -32,6 +40,9 @@ class GithubRepoActivity : BaseActivity() {
     private val viewModel: GithubRepoViewModel by lazy {
         GithubRepoViewModel()
     }
+    private val issuesAdapter: IssuesAdapter by lazy {
+        IssuesAdapter()
+    }
     private lateinit var repo: GithubRepo
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -44,7 +55,25 @@ class GithubRepoActivity : BaseActivity() {
                 setDisplayHomeAsUpEnabled(true)
             }
             showRepo(it)
-            setOnClickListener()
+        }
+        setOnClickListener()
+        showIssues()
+        subscribeDataObserver()
+    }
+
+    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
+        menuInflater.inflate(R.menu.menu_repo, menu)
+        return true
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem?): Boolean {
+        return when (item!!.itemId) {
+            R.id.create_issue -> {
+                IssueCreateActivity.start(this, repo)
+                true
+            }
+            else ->
+                super.onOptionsItemSelected(item)
         }
     }
 
@@ -57,12 +86,38 @@ class GithubRepoActivity : BaseActivity() {
         watcherCount.text = repo.watchersCount.toString()
         forksCount.text = repo.forksCount.toString()
         showStar(repo.star)
+        viewModel.save(repo)
     }
 
     private fun setOnClickListener() {
         star.onClick { clickStar() }
         ownerImage.onClick { clickOwner() }
         ownerName.onClick { clickOwner() }
+    }
+
+    private fun showIssues() {
+        issues.layoutManager = LinearLayoutManager(this)
+        issues.adapter = issuesAdapter
+        viewModel.issues(repo)
+            .subscribe(object : DefaultSingleObserver<List<Issue>>() {
+                override fun onSuccess(t: List<Issue>) {
+                    issueLabel.visibility = View.VISIBLE
+                    issuesAdapter.items = t.toMutableList()
+                }
+            })
+    }
+
+    private fun subscribeDataObserver() {
+        compositeDisposable += DataObserver.observe()
+            .filter { it is Issue }
+            .subscribe { issue ->
+                issuesAdapter.items.find {
+                    it.id == issue.id
+                } ?: run {
+                    issuesAdapter.addItem(issue as Issue)
+                    issues.scrollToPosition(0)
+                }
+            }
     }
 
     private fun clickStar() {

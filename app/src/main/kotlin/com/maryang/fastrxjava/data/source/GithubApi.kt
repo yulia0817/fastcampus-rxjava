@@ -1,6 +1,8 @@
 package com.maryang.fastrxjava.data.source
 
 import com.google.gson.JsonElement
+import com.maryang.fastrxjava.data.request.CreateIssueRequest
+import com.maryang.fastrxjava.entity.Issue
 import io.reactivex.Completable
 import io.reactivex.Single
 import retrofit2.http.*
@@ -29,4 +31,17 @@ interface GithubApi {
         @Path("owner") owner: String,
         @Path("repo") repo: String
     ): Completable
+
+    @GET("/repos/{owner}/{repo}/issues")
+    fun issues(
+        @Path("owner") owner: String,
+        @Path("repo") repo: String
+    ): Single<List<Issue>>
+
+    @POST("/repos/{owner}/{repo}/issues")
+    fun createIssue(
+        @Path("owner") owner: String,
+        @Path("repo") repo: String,
+        @Body request: CreateIssueRequest
+    ): Single<Issue>
 }

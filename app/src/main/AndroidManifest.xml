@@ -31,6 +31,10 @@
         <activity
             android:name="com.maryang.fastrxjava.ui.user.UserActivity"
             android:launchMode="singleTop" />
+        <activity
+            android:name="com.maryang.fastrxjava.ui.issue.IssueCreateActivity"
+            android:launchMode="singleTop"
+            android:windowSoftInputMode="adjustResize" />
     </application>
 
 </manifest>

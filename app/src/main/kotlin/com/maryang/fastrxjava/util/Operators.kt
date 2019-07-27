@@ -36,17 +36,17 @@ object Operators {
         val list = listOf<User>()
         val list2 = mutableListOf<String>()
         list.forEach {
-            list2.add(it.name)
+            list2.add(it.userName)
         }
 
         // map
         listOf<User>().map {
-            listOf(it.name)
+            listOf(it.userName)
         }
 
         // flatmap
         listOf<User>().flatMap {
-            listOf(it.name)
+            listOf(it.userName)
         }
 
         // flatmap
