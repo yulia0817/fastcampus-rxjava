@@ -19,5 +19,7 @@ data class Issue(
     @SerializedName("user")
     val user: User,
     @SerializedName("assignees")
-    val assignees: List<User>
+    val assignees: List<User>,
+    @SerializedName("comments_url")
+    val commentsUrl: String
 ) : Identifier, Parcelable

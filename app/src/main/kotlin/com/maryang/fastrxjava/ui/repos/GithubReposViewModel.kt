@@ -9,12 +9,12 @@ import com.maryang.fastrxjava.util.applySchedulersExtension
 import io.reactivex.Completable
 import io.reactivex.Single
 import io.reactivex.android.schedulers.AndroidSchedulers
-import io.reactivex.subjects.PublishSubject
+import io.reactivex.subjects.BehaviorSubject
 import java.util.concurrent.TimeUnit
 
 class GithubReposViewModel : BaseViewModel() {
     private val repository = GithubRepository()
-    private val searchSubject = PublishSubject.create<Pair<String, Boolean>>()
+    private val searchSubject = BehaviorSubject.create<Pair<String, Boolean>>()
     var searchText = ""
 
     val eventDisposable = EventBus.observe()

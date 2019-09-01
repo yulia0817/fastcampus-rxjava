@@ -17,9 +17,7 @@ class GithubRepository {
     private val dao = AppDatabase.get().githubDao()
 
     fun save(repo: GithubRepo) =
-        Completable.fromCallable {
-            dao.insert(repo)
-        }.subscribeOn(Schedulers.io())
+        dao.insert(repo)
 
     fun searchGithubRepos(q: String): Single<List<GithubRepo>> =
         api.searchRepos(q)
