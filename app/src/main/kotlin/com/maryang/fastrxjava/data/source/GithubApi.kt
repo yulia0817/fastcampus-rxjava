@@ -2,6 +2,7 @@ package com.maryang.fastrxjava.data.source
 
 import com.maryang.fastrxjava.entity.GithubRepo
 import com.maryang.fastrxjava.entity.User
+import io.reactivex.Single
 import retrofit2.Call
 import retrofit2.http.GET
 import retrofit2.http.Path
@@ -11,7 +12,7 @@ interface GithubApi {
     @GET("users/{userName}/repos")
     fun getRepos(
         @Path("userName") userName: String = "googlesamples"
-    ): Call<List<GithubRepo>>
+    ): Single<List<GithubRepo>>
 
     @GET("users/{userName}")
     fun getUser(
